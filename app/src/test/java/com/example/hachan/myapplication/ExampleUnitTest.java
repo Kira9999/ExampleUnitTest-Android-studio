@@ -1,6 +1,5 @@
 package com.example.hachan.myapplication;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -10,23 +9,10 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
 
-    private TestClass mTestClass;
-
-    @Before
-    public void setCalss() {
-        mTestClass = new TestClass(5, 5);
-
-    }
-
     @Test
-    public void test01() throws Exception {
-
-        assertEquals(10, mTestClass.printSum());
+    public void Char1() throws Exception {
+        assertEquals(4, 2 + 2);
     }
 
-    @Test
-    public void test02() throws Exception {
 
-        assertEquals(0, mTestClass.printSum());
-    }
 }
