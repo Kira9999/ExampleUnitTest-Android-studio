@@ -17,10 +17,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        debug {
-            testCoverageEnabled = true
-
-        }
     }
 
     testOptions {
@@ -44,40 +40,41 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
 }
 
-apply plugin: 'jacoco'
 
+apply plugin: 'jacoco'
 
 jacoco {
     toolVersion = "0.7.1.201405082137"
 }
 
 def coverageSourceDirs = [
-        'src/main/java',
+        '../app/src/main/java'
 ]
 
-task jacocoTestReport(type: JacocoReport, dependsOn: "connectedAndroidTestFLAVOR_NAMEDebug") {
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
     group = "Reporting"
-    description = "Generate Jacoco coverage reports after running tests."
+
+    description = "Generate Jacoco coverage reports"
+
+    classDirectories = fileTree(
+            dir: '../app/build/intermediates/classes/debug',
+            excludes: ['**/R.class',
+                       '**/R$*.class',
+                       '**/*$ViewInjector*.*',
+                       '**/BuildConfig.*',
+                       '**/Manifest*.*']
+    )
+
+    additionalSourceDirs = files(coverageSourceDirs)
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files('../app/build/jacoco/testDebug.exec')
+
     reports {
         xml.enabled = true
         html.enabled = true
+        html.destination "${buildDir}/jacocoHtml"
     }
-    classDirectories = fileTree(
-            dir: './build/intermediates/classes/debug',
-            excludes: ['**/R*.class',
-                       '**/*$InjectAdapter.class',
-                       '**/*$ModuleAdapter.class',
-                       '**/*$ViewInjector*.class'
-            ])
-    sourceDirectories = files(coverageSourceDirs)
-    executionData = files("$buildDir/jacoco/connectedAndroidTestMyFlavorDebug.exec")
-    // Bit hacky but fixes https://code.google.com/p/android/issues/detail?id=69174.
-    // We iterate through the compiled .class tree and rename $$ to $.
-    doFirst {
-        new File("$buildDir/intermediates/classes/").eachFileRecurse { file ->
-            if (file.name.contains('$$')) {
-                file.renameTo(file.path.replace('$$', '$'))
-            }
-        }
-    }
+
 }
+
+
